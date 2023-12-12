@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.6/dist/web3.min.js"></script>
+
+    <title>Token Exchange</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #exchange {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        #loginBtn,
+        #buyBtn {
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        #loginBtn:hover,
+        #buyBtn:hover {
+            background-color: #45a049;
+        }
+
+        #balance {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="exchange">
+        <h1>Token Exchange</h1>
+        <p>Bem-vindo à nossa corretora de tokens.</p>
+        <button id="loginBtn">Login</button>
+        <button id="buyBtn" style="display:none;">Comprar Tokens</button>
+        <p id="balance" style="display:none;">Saldo: <span id="balanceAmount">0</span> ETH</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.6/dist/web3.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginBtn = document.getElementById('loginBtn');
+            const buyBtn = document.getElementById('buyBtn');
+            const balanceElement = document.getElementById('balance');
+            const balanceAmountElement = document.getElementById('balanceAmount');
+
+            loginBtn.addEventListener('click', login);
+            buyBtn.addEventListener('click', buyTokens);
+
+            async function login() {
+                try {
+                    // Conecta-se a uma instância Web3 usando o provider padrão (MetaMask, etc.)
+                    window.web3 = new Web3(window.ethereum);
+
+                    // Pede permissão ao usuário para interagir com sua carteira
+                    await window.ethereum.enable();
+
+                    // Exibe o botão de compra e o saldo após o login
+                    buyBtn.style.display = 'block';
+                    balanceElement.style.display = 'block';
+
+                    // Atualiza o saldo
+                    updateBalance();
+                } catch (error) {
+                    console.error('Erro ao fazer login:', error);
+                    alert('Erro ao fazer login. Verifique o console para mais detalhes.');
+                }
+            }
+
+            async function buyTokens() {
+                try {
+                    // Endereço do contrato e outras informações necessárias
+                    const contractAddress = 'SEU_ENDERECO_DO_CONTRATO';
+                    const contractABI = [...];  // Coloque aqui o ABI do seu contrato
+
+                    // Cria uma instância do contrato usando Web3.js
+                    const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+                    // Exemplo: Chama uma função do contrato (substitua pelo que for necessário)
+                    const result = await contract.methods.suaFuncaoDoContrato().send({ from: web3.currentProvider.selectedAddress });
+
+                    console.log('Tokens comprados com sucesso!', result);
+                    alert('Tokens comprados com sucesso!');
+
+                    // Atualiza o saldo após a compra
+                    updateBalance();
+                } catch (error) {
+                    console.error('Erro ao comprar tokens:', error);
+                    alert('Erro ao comprar tokens. Verifique o console para mais detalhes.');
+                }
+            }
+
+            async function updateBalance() {
+                try {
+                    // Obtém o saldo da carteira conectada
+                    const accounts = await web3.eth.getAccounts();
+                    const address = accounts[0];
+                    const balance = await web3.eth.getBalance(address);
+
+                    // Exibe o saldo atualizado na página
+                    balanceAmountElement.textContent = web3.utils.fromWei(balance, 'ether');
+                } catch (error) {
+                    console.error('Erro ao obter saldo:', error);
+                    alert('Erro ao obter saldo. Verifique o console para mais detalhes.');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
